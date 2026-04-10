@@ -9,7 +9,7 @@ import Markdown from 'react-markdown';
 import { Search, Cpu, Zap, Activity, BookOpen, AlertCircle, Loader2, ShieldAlert, ShieldCheck, ChevronDown, ExternalLink, FileText, Factory, Tag, HelpCircle, Info, MessageSquare, Send, Bot, X, Menu, Github, Linkedin } from 'lucide-react';
 
 // Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 interface Pin {
   number: string;
