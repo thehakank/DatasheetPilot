@@ -9,7 +9,7 @@ import Markdown from 'react-markdown';
 import { Search, Cpu, Zap, Activity, BookOpen, AlertCircle, Loader2, ShieldAlert, ShieldCheck, ChevronDown, ExternalLink, FileText, Factory, Tag, HelpCircle, Info, MessageSquare, Send, Bot, X, Menu, Github, Linkedin } from 'lucide-react';
 
 // Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface Pin {
   number: string;
@@ -99,7 +99,8 @@ IMPORTANT RULES:
 4. Source Trust Policy: Prioritize official manufacturer datasheets first. If not found, use authorized distributors. Fall back to external references only if necessary. Set sourceTrustLevel accordingly.
 5. Match Quality: Set matchStatus accurately. If you can't find the exact part, but find the family, use "Family Match".
 6. Safety: Do NOT hallucinate pinouts or limits. If uncertain, set sourceTrustLevel to "Unverified" or matchStatus to "No Reliable Match".
-7. Prioritize structured engineering output (pinouts, limits) over long generic text.`,
+7. Prioritize structured engineering output (pinouts, limits) over long generic text.
+8. FULL PINOUT MANDATORY: You MUST provide the COMPLETE pin configuration for every package. Never truncate, summarize, or show only "important" pins. If a part has 40 pins, list all 40. If it has 100, list all 100. This is a core engineering requirement.`,
         config: {
           responseMimeType: 'application/json',
           responseSchema: {
@@ -467,25 +468,32 @@ Rules:
                       </div>
 
                       {/* Pin Table */}
-                      <div className="bg-zinc-950/50 rounded-xl border border-zinc-800/50 overflow-hidden">
-                        <table className="w-full text-sm text-left">
-                          <thead className="text-xs text-zinc-400 uppercase bg-zinc-900/80 border-b border-zinc-800/50">
-                            <tr>
-                              <th className="px-4 py-3 font-medium">Pin</th>
-                              <th className="px-4 py-3 font-medium">Name</th>
-                              <th className="px-4 py-3 font-medium">Description</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-zinc-800/50">
-                            {selectedPackage.pins.map((pin, idx) => (
-                              <tr key={idx} className="hover:bg-zinc-900/30 transition-colors">
-                                <td className="px-4 py-3 font-mono text-zinc-300">{pin.number}</td>
-                                <td className="px-4 py-3 font-semibold text-indigo-400">{pin.name}</td>
-                                <td className="px-4 py-3 text-zinc-400">{pin.description}</td>
+                      <div className="bg-zinc-950/50 rounded-xl border border-zinc-800/50 overflow-hidden flex flex-col">
+                        <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+                          <table className="w-full text-sm text-left">
+                            <thead className="text-xs text-zinc-400 uppercase bg-zinc-900/80 border-b border-zinc-800/50 sticky top-0 z-10">
+                              <tr>
+                                <th className="px-4 py-3 font-medium">Pin</th>
+                                <th className="px-4 py-3 font-medium">Name</th>
+                                <th className="px-4 py-3 font-medium">Description</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody className="divide-y divide-zinc-800/50">
+                              {selectedPackage.pins.map((pin, idx) => (
+                                <tr key={idx} className="hover:bg-zinc-900/30 transition-colors">
+                                  <td className="px-4 py-3 font-mono text-zinc-300">{pin.number}</td>
+                                  <td className="px-4 py-3 font-semibold text-indigo-400">{pin.name}</td>
+                                  <td className="px-4 py-3 text-zinc-400">{pin.description}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        {selectedPackage.pins.length > 10 && (
+                          <div className="px-4 py-2 bg-zinc-900/50 border-t border-zinc-800/50 text-[10px] text-zinc-500 text-center italic">
+                            Showing all {selectedPackage.pins.length} pins. Scroll to view more.
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (
