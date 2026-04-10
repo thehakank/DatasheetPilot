@@ -1,0 +1,5 @@
+{
+  "name": "Datasheet Pilot",
+  "description": "A high-trust multi-manufacturer datasheet assistant for engineering students.",
+  "requestFramePermissions": []
+}
